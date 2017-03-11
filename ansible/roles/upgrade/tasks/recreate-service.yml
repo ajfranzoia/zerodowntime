@@ -1,2 +1,5 @@
+- name: Stop app service
+  shell: docker-compose -f docker/docker-compose.yml stop app_{{ app_id }}
+
 - name: Recreate app service
-  shell: docker-compose -f docker/docker-compose.yml stop app_{{ app_id }} && docker-compose -f docker/docker-compose.yml up -d --no-deps app_{{ app_id }}
+  shell: docker-compose -f docker/docker-compose.yml up -d --no-deps app_{{ app_id }}
