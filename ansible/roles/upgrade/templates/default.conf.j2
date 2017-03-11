@@ -1,6 +1,7 @@
 upstream app_upstream {
   server app_1:3000{% if app_1_down %} down{% endif %};
   server app_2:3000{% if app_2_down %} down{% endif %};
+  keepalive 32;
 }
 
 server {

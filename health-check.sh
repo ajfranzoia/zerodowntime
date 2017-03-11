@@ -1,8 +1,8 @@
 #!/bin/sh
 
-APP_PORT=8009
+APP_PORT=8000
 APP_URL="http://localhost:$APP_PORT/ping"
-CHECK_INTERVAL=0.05
+CHECK_INTERVAL=0.2
 
 echo "Running app health check on $APP_URL"
 

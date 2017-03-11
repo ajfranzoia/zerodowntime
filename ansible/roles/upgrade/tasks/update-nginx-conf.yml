@@ -1,0 +1,4 @@
+- name: Update nginx config
+  template: src=default.conf.j2 dest=./docker/nginx/default.conf
+  notify:
+    - reload nginx container

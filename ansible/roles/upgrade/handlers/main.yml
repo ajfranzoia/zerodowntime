@@ -1,0 +1,2 @@
+- name: reload nginx container
+  shell: docker-compose -f docker/docker-compose.yml exec -T proxy service nginx reload
