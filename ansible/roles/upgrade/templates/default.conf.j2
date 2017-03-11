@@ -1,0 +1,16 @@
+upstream app_upstream {
+  server app_1:3000{% if app_1_down %} down{% endif %};
+  server app_2:3000{% if app_2_down %} down{% endif %};
+}
+
+server {
+  listen 80;
+
+  proxy_http_version 1.1;
+  proxy_set_header Connection "";
+  proxy_next_upstream error timeout; #ADDED
+
+  location / {
+    proxy_pass http://app_upstream;
+  }
+}

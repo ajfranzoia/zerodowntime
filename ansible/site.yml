@@ -1,0 +1,12 @@
+---
+# This playbook deploys the whole application stack in this site.
+
+- name: configure and deploy the webservers and application code
+  hosts: all
+  vars:
+    - from_version: 0.0.1
+    - to_version: 0.0.2
+    - app_1_down: false
+    - app_2_down: false
+  roles:
+    - upgrade

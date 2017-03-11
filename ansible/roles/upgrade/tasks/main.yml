@@ -1,0 +1,60 @@
+- name: Update app_1 version
+  set_fact:
+    app_1_version: "{{ to_version }}"
+    app_2_version: "{{ from_version }}"
+
+- name: Update image version for app_1 service
+  template: src=docker-compose.yml.j2 dest=./docker/docker-compose.yml
+
+- name: Mark app_1 in upstream as down in proxy config
+  set_fact:
+    app_1_down: true
+
+- name: Mark app_1 in upstream as down in proxy config B
+  template: src=default.conf.j2 dest=./docker/nginx/default.conf
+
+- name: Mark app_2 in upstream as down in proxy config B
+  template: src=default.conf.j2 dest=./docker/nginx/default.conf
+
+- name: Reload nginx service in proxy container
+  shell: docker-compose -f docker/docker-compose.yml exec -T proxy service nginx reload
+
+- name: Recreate app_1 service
+  shell: docker-compose -f docker/docker-compose.yml up -d --no-deps app_1
+
+- name: Mark app_1 in upstream as up in proxy config
+  set_fact:
+    app_1_down: false
+
+- name: Reload nginx service in proxy container
+  shell: docker-compose -f docker/docker-compose.yml exec -T proxy service nginx reload
+
+- name: Mark app_2 in upstream as down in proxy config
+  set_fact:
+    app_2_down: true
+
+- name: Mark app_2 in upstream as down in proxy config B
+  template: src=default.conf.j2 dest=./docker/nginx/default.conf
+
+- name: Update app_2 version
+  set_fact:
+    app_2_version: "{{ to_version }}"
+
+- name: Update image version for app_2 service
+  template: src=docker-compose.yml.j2 dest=./docker/docker-compose.yml
+
+- name: Reload nginx service in proxy container
+  shell: docker-compose -f docker/docker-compose.yml exec -T proxy service nginx reload
+
+- name: Recreate app_2 service
+  shell: docker-compose -f docker/docker-compose.yml up -d --no-deps app_2
+
+- name: Mark app_2 in upstream as up in proxy config
+  set_fact:
+    app_2_down: false
+
+- name: Mark app_2 in upstream as up in proxy config B
+  template: src=default.conf.j2 dest=./docker/nginx/default.conf
+
+- name: Reload nginx service in proxy container
+  shell: docker-compose -f docker/docker-compose.yml exec -T proxy service nginx reload

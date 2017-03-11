@@ -1,0 +1,8 @@
+# Run ansible playbook
+ ansible-playbook -i "localhost," -c local ansible/site.yml -vv
+
+# Launch containers
+docker-compose -f docker/docker-compose.yml up
+
+# Launch health check
+./health-check

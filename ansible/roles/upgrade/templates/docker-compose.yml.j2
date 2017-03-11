@@ -1,0 +1,29 @@
+version: "2"
+
+services:
+  proxy:
+    image: nginx:1.11
+    restart: always
+    ports:
+      - "8000:80"
+    volumes:
+      - ./nginx/:/etc/nginx/conf.d/
+
+  app_1:
+    image: tactivos/devops-challenge:{{ app_1_version }}
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "3000"
+
+  app_2:
+    image: tactivos/devops-challenge:{{ app_2_version }}
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "3000"
+
+  db:
+    image: mongo
