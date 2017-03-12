@@ -1,5 +1,8 @@
 - name: Provision docker-compose bootstrap
-  copy: src=../docker/bootstrap/ dest={{ provision_dir }}
+  copy:
+    src: "../docker/bootstrap/"
+    dest: "{{ provision_dir }}"
+    force: no
 
 - name: Launch containers
   shell: docker-compose -f {{ provision_dir }}/docker-compose.yml up -d --no-recreate
