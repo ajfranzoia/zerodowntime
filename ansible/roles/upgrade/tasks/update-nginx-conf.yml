@@ -1,4 +1,5 @@
 - name: Update nginx config
   template: src=default.conf.j2 dest=./docker/nginx/default.conf
-  notify:
-    - reload nginx container
+
+- name: reload nginx container
+  shell: docker-compose -f docker/docker-compose.yml exec -T proxy service nginx reload
