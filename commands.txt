@@ -1,8 +1,11 @@
-# Run ansible playbook82/teams
-ansible-playbook -i "localhost," -c local ansible/app.yml -vv
+# Run ansible playbook
+ansible-playbook -i "localhost," -c local ansible/app.yml -e "version=0.0.2" -vv
+
+# Run only provision role
+ansible-playbook -i "localhost," -c local ansible/app.yml -e "version=0.0.2" -t provision -vv
 
 # Launch containers
 docker-compose -f docker/docker-compose.yml up
 
 # Launch health check
-./health-check
+./scripts/health-check

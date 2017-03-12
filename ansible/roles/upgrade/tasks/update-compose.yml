@@ -1,2 +1,2 @@
 - name: Update docker-compose.yml
-  template: src=docker-compose.yml.j2 dest=./docker/docker-compose.yml
+  template: src=docker-compose.yml.j2 dest={{ compose_file }}

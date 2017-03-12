@@ -1,5 +1,5 @@
 - name: Get current version
-  shell: cat ./docker/docker-compose.yml | grep -m1 tactivos/devops-challenge | grep -o '.....$'
+  shell: cat {{ compose_file }} | grep -m1 tactivos/devops-challenge | grep -o '.....$'
   register: current_version
 
 - name: Update app_1 version to {{ version }} (current version is {{ current_version }})

@@ -1,7 +1,11 @@
 - name: Configure and upgrade application
   hosts: all
   vars:
+    - provision_dir: ~/zerodowntime
+    - compose_file: "{{ provision_dir }}/docker-compose.yml"
+    - nginx_conf_file: "{{ provision_dir }}/nginx/default.conf"
     - app_1_down: false
     - app_2_down: false
   roles:
-    - upgrade
+    - { role: provision, tags: ["provision"] }
+    - { role: upgrade, tags: ["upgrade"] }
