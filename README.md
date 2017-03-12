@@ -11,7 +11,7 @@ ZeroDowntime is an example of upgrading a Docker-containerized application witho
 * Docker >1.10 and Docker Compose
 * Ansible >2.0
 
-**Notice:** the ```0.0.2``` tag of ```tactivos/devops-challenge``` does not exist in the tactivos DockerHub repository, but it can be created locally for testing purposes by running ```docker build . -t tactivos/devops-challenge:0.0.2``` inside the ```docker/devops-challenge-v0.0.2``` directory.
+**Notice:** the ```0.0.2``` tag of ```tactivos/devops-challenge``` does not exist in the tactivos DockerHub repository, and needs to be created locally for testing purposes by running ```docker build . -t tactivos/devops-challenge:0.0.2``` inside the ```docker/devops-challenge-v0.0.2``` directory.
 
 ## Setup
 
@@ -64,7 +64,8 @@ docker + haproxy + custom tool ([here](https://docs.quay.io/solution/zero-downti
 
 Inspired mainly by http://openmymind.net/Framework-Agnostic-Zero-Downtime-Deployment-With-Nginx/ and https://github.com/vincetse/docker-compose-zero-downtime-deployment, I decided to follow the Blue-Green deployment pattern (brief explanation can be found [here] (https://martinfowler.com/bliki/BlueGreenDeployment.html)) and setting up a nginx instance as a reverse proxy for application.
 
-At first I decided to start with a pure nginx approach on my localhost. I configured nginx as a reverse proxy in front of two application containers, which I would spin up manually:
+At first I decided to start with a pure nginx approach on my localhost. I configured nginx as a reverse proxy in front of two application containers, which I would spin up manually. The ```upstream``` directive enables nginx to act as a load balancing and distribute traffic to several servers.
+
 
 * Application containers launching:
 
@@ -205,4 +206,29 @@ The main Ansible tasks can be found below:
 
 I verified that the services were updated like in the previous solution and that the zero downtime was achieved. I solved some issues when execution docker-compose via Ansible (as described in https://github.com/docker/compose/issues/3352), but solved them by using the ```-T``` option. I also refactored and allowed the version-to-upgrade value to be configurable as a command line argument when running the Ansible playbook.
 
-I separated the full provision + upgrade playbook by adding roles and tags, in order to run them in a separate way if needed (useful to manually verify the zero downtime requirement, see above).
+Moreover, I separated the full provision + upgrade playbook by adding roles and tags, in order to run them in a separate way if needed (useful to manually verify the zero downtime requirement, see above).
+
+<br />
+***
+<br />
+
+## Bonus point #1
+
+> Explain how you would limit/control the amount of compute/memory resources accessible by any member of your solution.
+
+Since the members of the solution are Docker containers, the resources accesible by them can be controlled by configuration (as stated on the [official Docker documentation](https://docs.docker.com/engine/admin/resource_constraints/)). Docker provides ways to control memory, CPU, and block IO. The list of available parameters available for a service in a ```docker-compose.yml``` file can be found [here](https://docs.docker.com/compose/compose-file/compose-file-v2/#cpushares-cpuquota-cpuset-domainname-hostname-ipc-macaddress-memlimit-memswaplimit-memswappiness-oomscoreadj-privileged-readonly-restart-shmsize-stdinopen-tty-user-workingdir).
+
+Example of setting resources constraints in a ```docker-compose.yml``` file:
+
+```yaml
+services:
+  app:
+    #..
+    cpu_quota: 50000 # control CPU CFS microseconds quota
+    mem_limit: 4m # limit memory to 4 megabytes
+  db:
+    #...
+    mem_swappiness: 50 # percentage of memory swapiness
+    cpuset: 1,3 # use the second and fourth CPU only
+
+```
