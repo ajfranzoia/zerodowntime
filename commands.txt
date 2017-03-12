@@ -1,5 +1,5 @@
-# Run ansible playbook
- ansible-playbook -i "localhost," -c local ansible/site.yml -vv
+# Run ansible playbook82/teams
+ansible-playbook -i "localhost," -c local ansible/app.yml -vv
 
 # Launch containers
 docker-compose -f docker/docker-compose.yml up

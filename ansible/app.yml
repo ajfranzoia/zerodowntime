@@ -1,8 +1,6 @@
 - name: Configure and upgrade application
   hosts: all
   vars:
-    - from_version: 0.0.1
-    - to_version: 0.0.2
     - app_1_down: false
     - app_2_down: false
   roles:
