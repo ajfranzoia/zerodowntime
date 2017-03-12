@@ -11,7 +11,7 @@ services:
 
   app_1:
     image: tactivos/devops-challenge:{{ app_1_version }}
-    restart: always
+    restart: unless-stopped
     depends_on:
       - db
     ports:
@@ -19,7 +19,7 @@ services:
 
   app_2:
     image: tactivos/devops-challenge:{{ app_2_version }}
-    restart: always
+    restart: unless-stopped
     depends_on:
       - db
     ports:
