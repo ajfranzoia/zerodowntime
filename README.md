@@ -175,9 +175,33 @@ I run manually this solution, step by step, the zero downtime was achieved again
 
 After this I decided to automate the solution, but instead of creating a bash script I went for an Ansible solution, which I realized that would result in a more manageable implementation, since one of Ansible's purposes is automating IT configuration and deployments.
 
-I started designing an upgrade playbook and running it in my localhost, for the purpose of the required solution. At first, the playbook tasks were defined in a single file but then I refactored them it into smaller tasks by using includes to keep the solution DRY. I launched services with the ```docker-compose up -d``` command, and then run the upgrade playbook by running:
+I started designing an upgrade playbook and running it in my localhost, for the purpose of the required solution. At first, the playbook tasks were defined in a single file but then I refactored them it into smaller tasks by using includes to keep the solution DRY. I launched services with the ```docker-compose up -d``` command, and then run the upgrade playbook by running ```ansible-playbook -i "localhost," -c local ansible/app.yml -vv```.
 
-```ansible-playbook -i "localhost," -c local ansible/app.yml -vv```.
+The main Ansible tasks can be found below:
+
+* recreate-service task (stops and recreates a container):
+```yaml
+- name: Stop app service {{ app_id }}
+  shell: docker-compose -f {{ compose_file }} stop app_{{ app_id }}
+
+- name: Recreate app service {{ app_id }}
+  shell: docker-compose -f {{ compose_file }} up -d --no-deps app_{{ app_id }}
+```
+
+* update-compose task (updates the docker-compose.yml file):
+```yaml
+- name: Update docker-compose.yml
+  template: src=docker-compose.yml.j2 dest={{ compose_file }}
+```
+
+* update-nginx-conf task (updates the nginx default.conf file and reloads the nginx process in the proxy container):
+```yaml
+- name: Update nginx config
+  template: src=default.conf.j2 dest={{ nginx_conf_file }}
+
+- name: reload nginx container
+  shell: docker-compose -f {{ compose_file }} exec -T proxy service nginx reload
+```
 
 I verified that the services were updated like in the previous solution and that the zero downtime was achieved. I solved some issues when execution docker-compose via Ansible (as described in https://github.com/docker/compose/issues/3352), but solved them by using the ```-T``` option. I also refactored and allowed the version-to-upgrade value to be configurable as a command line argument when running the Ansible playbook.
 
