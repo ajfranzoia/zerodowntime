@@ -6,6 +6,24 @@ Tech challenge for [Mural](mural.co)
 
 ZeroDowntime is an example of upgrading a Docker-containerized application without  downtime for end-users.
 
+## Requirements
+
+* Docker >1.10 and Docker Compose
+* Ansible
+
+## Setup
+
+* Clone project
+```bash
+git clone https://github.com/ajfranzoia/zerodowntime
+```
+
+* Configure provision directory in ```ansible/app.yml``` vars section
+* Run playbook on localhost:
+```bash
+ansible-playbook -i "localhost," -c local ansible/app.yml -e "version=0.0.2" -vv
+```
+
 
 ## Design process and decisions
 
