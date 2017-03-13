@@ -243,3 +243,13 @@ Docker machine provides a way to efficiently install and manage the Docker engin
 To distribute the traffic evenly a Load Balancer service like AWS ELB or Azure Load Balancer Service may be used. Both solutions deliver network performance and high availability.
 
 It is important to remark that the persistence layer of the solution (in this case, the mongodb database service) should be pulled out and managed separatedly, whether in other hosts or services, in order to keep a shared state across the application instances.
+
+## Bonus point #3
+
+> Explain how service discovery would work in your solution provided for "Bonus point #2" whether it's the same application or multiple microservices, and how you would monitor the health and logs of this solution.
+
+If using AWS, the service discovery functionality may be implemented by using its Elastic Load Balancer service, which acts as a discovery router, besides its load balancing among EC2 instances function. EC2 instances are registered explicitly via an API call or automatically when auto-scaling. There isn’t a separate service registry. ELB provides health checking functionalities on instances (see [here](http://docs.aws.amazon.com/elasticloadbalancing/latest/classic/elb-healthchecks.html)).
+
+Docker Swarm provides as well service discovering capabilities, since each swarm manager assigns each service in the swarm a unique DNS name and load balances running containers. Thus, every container in the swarm can be queried through a DNS server embedded in the swarm. Docker supports several key-value stores to keep locations and attributes of hosts, such as ZooKeeper, etcd and Consul. Health monitoring can be carried out by defining the health check on the registered services.
+
+Both solutions are an example of server-side service discovering. For the logging part, ELK stack instances (Elasticsearch + Logstash + Kibana) may be utilised.
