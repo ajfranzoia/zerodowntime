@@ -230,5 +230,16 @@ services:
     #...
     mem_swappiness: 50 # percentage of memory swapiness
     cpuset: 1,3 # use the second and fourth CPU only
-
 ```
+
+## Bonus point #2
+
+> Explain how you would make this solution to be Highly Available and able to scale horizontally while distributing traffic evenly, granted you're running in a cloud provider as Azure, AWS, etc. and can rely on their infrastructure, but knowing any VM can be recycled at any time (though never more than 1 at a time).
+
+The solution can be distributed and scaled by using in combination Docker Machine  and Docker Swarm to setup nodes. Ansible may be used to carry out the provisioning and upgrade of the application.
+
+Docker machine provides a way to efficiently install and manage the Docker engine on multiple remote hosts, and available plugins exist for many cloud providers like AWS, Digital Ocean, Azure, etc. Docker Swarm can be used to manage clusters of Docker engines, since the swarm manager monitors them and automatically adapts the scaling up and down by adding or removing replicas to maintain the target state.
+
+To distribute the traffic evenly a Load Balancer service like AWS ELB or Azure Load Balancer Service may be used. Both solutions deliver network performance and high availability.
+
+It is important to remark that the persistence layer of the solution (in this case, the mongodb database service) should be pulled out and managed separatedly, whether in other hosts or services, in order to keep a shared state across the application instances.
